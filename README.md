@@ -1,7 +1,8 @@
-# First Move — Facilitation Instincts Assessment
+# First Move
 
 Single-page self-assessment web app for University at Buffalo Community Assistants,
-taken live during training (~80 CAs per room, on phones, under 3 minutes).
+taken live during training (~80 CAs per room, on phones, under 3 minutes). Surfaces
+each CA's facilitation instinct (their default tendency) in under 3 minutes.
 
 See [`PRD.md`](./PRD.md) for full requirements, screens, scoring, branding, and
 acceptance criteria.
