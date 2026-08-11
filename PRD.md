@@ -47,7 +47,7 @@ A single-page self-assessment web app for University at Buffalo Community Assist
 
 - **Stack:** React + Vite, deployed to Netlify as a static site. No backend, no database, no API keys, no external requests at runtime (fonts self-hosted or system).
 - **Payload:** target under 200KB total transfer. 80 phones hitting hall wifi at the same moment is the real load test.
-- **Mobile-first:** designed at 375px width, works to desktop. Touch targets ≥ 48px. Answer cards full-width.
+- **Responsive (mobile-first, industry standard):** Author base styles for a 360px floor (smallest common Android); design comfortably at 375–390px (modern iPhone). Layout is a fluid single column that fills the viewport with 16px side gutters, capped by a **~460px max-width container** so content reads as one tidy column on every device — full-bleed on phones, centered (never stretched) on tablet/desktop. Answer cards are full-width within that column. Touch targets ≥ **48px** (satisfies Apple HIG 44pt and Material 48dp). Verify layout at **360 / 390 / 768 / 1280px**.
 - **Accessibility:** semantic buttons, visible focus states, WCAG AA contrast (UB Blue and Townsend Gray both pass on white for text), screen-reader-sane labels, no motion beyond the selection flash.
 - **Resilience:** app fully functional offline after first load. Refresh mid-quiz may reset progress; that's acceptable at 2 minutes total, but state should survive rotation/lock-screen via component state or sessionStorage.
 - **QR-ready:** short route (`/`), no query params needed. README includes a note to generate one QR per room pointing at the production URL.
