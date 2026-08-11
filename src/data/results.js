@@ -3,10 +3,10 @@
 // §2 tie handling, §5 results + final screen). Do not reword, shorten, or add.
 
 export const results = {
-  // Intro screen frame — spec §3, rule 2 (verbatim).
-  // NOTE: spec renders this mid-sentence lowercase ("there are no right answers...").
-  // Left verbatim; see the fidelity note about sentence-case for screen display.
-  intro: `there are no right answers here, and answering with what you'd actually do (not what you think you should do) is the only way the result is useful to you`,
+  // Intro screen frame — content from spec §3, rule 2.
+  // Sentence-cased for screen display (capital "There", closing period) per sign-off;
+  // wording otherwise unchanged from the spec.
+  intro: `There are no right answers here, and answering with what you'd actually do (not what you think you should do) is the only way the result is useful to you.`,
 
   // Labels for the five results blocks — spec §5 (verbatim, bolded in source).
   labels: {
