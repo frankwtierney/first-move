@@ -20,7 +20,7 @@ A single-page self-assessment web app for University at Buffalo Community Assist
 
 ## Content
 
-- All 12 items, option keys (PS/GE/AL/AO), and all results copy come **verbatim** from `Facilitation-Instincts-Assessment-Spec.md` §4 and §5. Do not paraphrase, improve, or reword any student-facing content.
+- All 12 items, option keys (PS/GE/AL/AO), and all results copy come **verbatim** from `firstmove-Spec.md` §4 and §5. Do not paraphrase, improve, or reword any student-facing content.
 - Store items in a single `questions.js` (or `.json`) data file: `{ id, stem, options: [{ text, key }] }`. Results copy in a parallel `results.js`. Content editable without touching component code.
 
 ## Scoring Logic
