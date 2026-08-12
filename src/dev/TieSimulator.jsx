@@ -3,7 +3,7 @@
 // production build and never reaches students. Styles are inline here (not in
 // index.css) so no dev styling ships to production either.
 
-// Build an answers map { 1..12 -> key } matching the requested per-key counts.
+// Build an answers map { 1..N -> key } matching the requested per-key counts.
 function pattern(counts) {
   const answers = {}
   let id = 1

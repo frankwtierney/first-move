@@ -1,6 +1,7 @@
 /* First Move — visual system.
    Brand: UB Blue #005bbb (action/accent) + Townsend Gray #666666 (secondary),
-   on white. No other brand colors, no tints of the blue, no gradients.
+   on white. No other brand colors, no gradients. The one approved blue tint is
+   the result quadrant fill (.cell.primary) — a soft wash so the marker reads on top.
    Neutral grays below are structural only (borders/tracks), never blue-tinted. */
 
 :root {
@@ -10,6 +11,9 @@
   --bg: #ffffff;
   --line: #e2e2e2;          /* neutral hairline */
   --line-strong: #cfcfcf;   /* neutral border, resting card */
+  --grid-line: #b6b6b6;     /* quadrant cell borders — darker, easier to see */
+
+  --letchworth: #e56a54;     /* Letchworth Autumn (UB secondary) — result marker dot */
 
   --font-head: "Sofia Pro", "Century Gothic", "Segoe UI", system-ui, sans-serif;
   --font-body: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -33,7 +37,14 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  /* Avoid a single short word orphaned on the last wrapped line. */
+  text-wrap: pretty;
 }
+/* Headings read best balanced across lines. */
+.display, .tendency-name, .stem, .stem-wrap .prompt { text-wrap: balance; }
+/* Reading copy: explicitly avoid orphaned last-line words (belt-and-suspenders
+   over the inherited body rule). Needs a modern engine (Chrome/Safari). */
+.block, .block span, .tendency-second, .tie-line, .axis-desc, .lede, .option span { text-wrap: pretty; }
 
 /* App frame: single centered column, safe-area aware, sticky footer. */
 .app {
@@ -83,6 +94,29 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
 }
 .lede { color: var(--gray); font-size: 1.0625rem; }
 
+/* ---- Intro form fields (optional email + building) ---- */
+.fields { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label { font-family: var(--font-head); font-weight: 600; font-size: 0.9375rem; color: var(--ink); }
+.field-hint { font-family: var(--font-body); font-weight: 400; font-size: 0.8125rem; color: var(--gray); }
+.field-note { font-family: var(--font-body); font-weight: 400; font-size: 0.8125rem; line-height: 1.4; color: var(--gray); }
+.field-error { font-family: var(--font-body); font-weight: 500; font-size: 0.8125rem; color: #b00020; }
+.field input, .field select {
+  font: inherit;
+  min-height: var(--tap);
+  padding: 10px 14px;
+  color: var(--ink);
+  background: #fff;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+.field input::placeholder { color: #9a9a9a; }
+.field input:focus, .field select:focus {
+  outline: 3px solid var(--ub-blue);
+  outline-offset: 1px;
+  border-color: var(--ub-blue);
+}
+
 /* ---- Buttons ---- */
 .btn {
   font-family: var(--font-head);
@@ -96,6 +130,7 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
   transition: transform 120ms ease, background-color 120ms ease, color 120ms ease;
 }
 .btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 .btn-primary {
   background: var(--ub-blue);
   color: #fff;
@@ -118,6 +153,11 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
   border: 2px solid var(--ub-blue);
   width: 100%;
 }
+
+/* Anchors styled as buttons (e.g. the mailto results link) render as blocks. */
+a.btn { display: block; text-align: center; text-decoration: none; }
+/* Stacked action buttons (email + continue) on the results screen. */
+.btn-stack { display: flex; flex-direction: column; gap: 10px; }
 
 /* Focus: always visible, keyboard-friendly. */
 :where(button, a, [tabindex]):focus-visible {
@@ -157,6 +197,29 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
   letter-spacing: -0.01em;
   margin: 22px 0 18px;
 }
+/* Stem split: scene sets the moment (italic), prompt is the ask (own line). */
+.stem-wrap { margin: 22px 0 18px; }
+.stem-wrap .scene {
+  display: block;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.25rem;
+  line-height: 1.36;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: pre-line; /* honor \n in scene copy (e.g. "...Again." on its own line) */
+}
+.stem-wrap .prompt {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: 0.01em;
+  color: var(--ub-blue);
+}
+
 .options { display: flex; flex-direction: column; gap: 10px; }
 .option {
   position: relative;
@@ -212,6 +275,7 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
   margin: 0;
 }
 .tendency-second { color: var(--gray); font-size: 1rem; margin: 6px 0 0; }
+.next-name { font-style: italic; font-weight: 600; color: var(--ink); }
 .tie-line {
   margin: 14px 0 0;
   padding: 12px 14px;
@@ -231,15 +295,35 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
 .block { margin: 0 0 10px; }
 .block b { color: var(--ink); font-family: var(--font-head); }
 .block span { color: var(--gray); }
+/* Inline emphasis in copy: bold pulls a word to primary ink, italic stays subtle. */
+.block span strong { color: var(--ink); font-weight: 700; }
+.block span em { font-style: italic; color: var(--ink); }
+/* The one-word answer after "What it gives you:" / "What it costs:" — styled lead. */
+.lead-word { font-style: italic; font-weight: 600; color: var(--ink); }
+
+/* ---- Grid explainer (read-the-grid primer before the result) ---- */
+.axis-guide { list-style: none; margin: 20px 0 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.axis-name {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ub-blue);
+  margin: 0 0 3px;
+}
+.axis-desc { margin: 0; color: var(--ink); font-size: 1.0625rem; line-height: 1.4; }
+.axis-desc em { font-style: italic; color: var(--ink); }
 
 /* ---- Quadrant grid (signature) ---- */
 .grid-wrap { margin: 22px 0 4px; }
 .grid-axis-top, .grid-axis-bottom {
   text-align: center;
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gray);
+  color: #333;
 }
 .grid-axis-top { margin-bottom: 6px; }
 .grid-axis-bottom { margin-top: 6px; }
@@ -247,15 +331,17 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
 .grid-side {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gray);
+  color: #333;
   display: grid;
   place-items: center;
 }
 .grid-side.right { transform: none; writing-mode: vertical-rl; }
 .grid {
+  position: relative; /* anchor for the absolutely-positioned result dot */
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -264,22 +350,37 @@ h1, h2, h3, .eyebrow { font-family: var(--font-head); }
   aspect-ratio: 1 / 0.72;
 }
 .cell {
-  border: 1.5px solid var(--line);
+  border: 1.5px solid var(--grid-line);
   border-radius: 10px;
   display: grid;
   place-content: center;
   text-align: center;
   padding: 8px;
-  color: var(--gray);
-  font-size: 12px;
+  color: #333;
+  font-size: 15px;
   font-family: var(--font-head);
-  font-weight: 600;
+  font-weight: 900; /* Black weight for the quadrant names */
 }
 .cell.secondary { border-color: var(--ub-blue); color: var(--ub-blue); }
 .cell.primary {
-  background: var(--ub-blue);
+  /* Tinted rather than solid, so the result dot reads on top. */
+  background: rgba(0, 91, 187, 0.20);
   border-color: var(--ub-blue);
-  color: #fff;
+  color: var(--ub-blue);
+}
+
+/* Result marker: a "you are here" pin. White halo keeps it crisp even when it
+   drifts over a centered cell label; position encodes lean direction + depth. */
+.grid-dot {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--letchworth);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 1.5px var(--letchworth), 0 1px 4px rgba(0, 0, 0, 0.28);
+  transform: translate(-50%, -50%);
+  z-index: 2;
 }
 
 /* ---- Spacing helpers ---- */

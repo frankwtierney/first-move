@@ -1,6 +1,6 @@
 // First Move — scoring. Pure functions, no React, easy to test.
 // Rules (PRD §Scoring Logic, spec §2):
-//   - Count answers per key across the 12 items.
+//   - Count answers per key across the 13 items.
 //   - Primary = highest count. Secondary = next highest.
 //   - Tie for FIRST  -> blend: render every tied tendency's full blocks.
 //   - Tie for SECOND -> show primary normally; list both secondary names.

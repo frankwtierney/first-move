@@ -15,19 +15,19 @@ A single-page self-assessment web app for University at Buffalo Community Assist
 
 1. **Intro screen.** Title, one-paragraph frame (verbatim from spec §3, rule 2: "there are no right answers... answering with what you'd actually do is the only way the result is useful to you"), a Start button. Nothing else.
 2. **Question screens (×12).** One scenario per screen. Stem at top, four tappable answer cards, progress indicator (e.g., "4 of 12"). Tapping an answer auto-advances after a brief (~250ms) selected-state flash. A back button allows changing the previous answer. No skip.
-3. **Results screen.** Primary tendency name large, secondary tendency smaller beneath it. Then the four content blocks for the primary tendency from spec §5: default move, what it gives you, what it costs you, CMU watch-out, CP watch-out. Ties render as a blend per spec §2 (e.g., "Solver-Observer") with one line: "Two instincts tied. As you read both, submit whichever felt truest."
+3. **Results screen.** Primary move (tendency name) large, next move smaller beneath it. Then the five content blocks for the primary tendency from spec §5: in the moment, what it gives you, what it costs, CMU watch-out, CP watch-out. Ties render as a blend per spec §2 (e.g., "Solver-Observer") with one line: "Two instincts tied. As you read both, submit whichever felt truest."
 4. **Next-step screen.** The closing instruction from spec §5: open Mentimeter, place yourself on the grid, and be ready to answer what you'll lean on and where your instinct needs a leash at your first CMU and CheckPoint. Include a Retake button.
 
 ## Content
 
-- All 12 items, option keys (PS/GE/AL/AO), and all results copy come **verbatim** from `firstmove-Spec.md` §4 and §5. Do not paraphrase, improve, or reword any student-facing content.
-- Store items in a single `questions.js` (or `.json`) data file: `{ id, stem, options: [{ text, key }] }`. Results copy in a parallel `results.js`. Content editable without touching component code.
+- All 13 items, option keys (PS/GE/AL/AO), and all results copy track `firstmove-Spec.md` §4 and §5. Spec and app are a **living doc** — edit both together; keep student-facing content in sync across the two.
+- Store items in a single `questions.js` (or `.json`) data file: `{ id, scene, prompt, options: [{ text, key }] }`. Results copy in a parallel `results.js`. Content editable without touching component code.
 
 ## Scoring Logic
 
-- Count answers per key across 12 items. Primary = highest count; secondary = second highest.
+- Count answers per key across 13 items. Primary = highest count; secondary = second highest.
 - **Tie for first:** render blend result showing both tendencies' full blocks, stacked, primary-tie framing per spec.
-- **Tie for second:** show primary normally; pick the secondary that has more "acts quickly" adjacency to the primary? No. Keep it simple: if secondary ties, list both names in the secondary line ("Secondary: Energizer / Observer") and only render the primary's blocks.
+- **Tie for second:** show primary normally; pick the secondary that has more "acts quickly" adjacency to the primary? No. Keep it simple: if secondary ties, list both names in the next-move line ("Next move: Energizer / Observer") and only render the primary's blocks.
 - All scoring client-side. No network calls after initial page load. No analytics, no storage, no cookies, nothing leaves the device.
 
 ## Randomization
@@ -61,7 +61,7 @@ A single-page self-assessment web app for University at Buffalo Community Assist
 
 ## Acceptance Criteria
 
-1. A first-time user on a phone completes intro → 12 items → results in under 3 minutes with no instructions beyond the intro screen.
+1. A first-time user on a phone completes intro → 13 items → grid primer → results in under 3 minutes with no instructions beyond the intro screen.
 2. Answer keys and copy match the spec file exactly (spot-check items 1, 7, 12 and all four results blocks).
 3. Forcing a tie (e.g., 4/4/2/2 pattern) renders the blend state correctly.
 4. Option order differs between two fresh loads.

@@ -61,7 +61,10 @@ export default function Question({ item, index, total, current, onAnswer, onBack
         </div>
         <div className="track"><i style={{ width: `${pct}%` }} /></div>
 
-        <h1 id="q-stem" className="stem">{item.stem}</h1>
+        <h1 id="q-stem" className="stem-wrap">
+          <span className="scene">{item.scene}</span>
+          <span className="prompt">{item.prompt}</span>
+        </h1>
 
         <div className="options" role="group" aria-label="Choose your first instinct">
           {options.map((opt) => {

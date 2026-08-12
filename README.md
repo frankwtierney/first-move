@@ -10,13 +10,13 @@ React + Vite, static build, no backend. Nothing a user enters leaves their devic
 ## Contents
 
 - [`PRD.md`](./PRD.md) — product requirements: screens, flow, scoring, branding, acceptance criteria.
-- [`firstmove-Spec.md`](./firstmove-Spec.md) — content source of truth: the 12 items, PS/GE/AL/AO answer keys, and the results copy. All student-facing text is **verbatim** from §4 and §5.
+- [`firstmove-Spec.md`](./firstmove-Spec.md) — content companion: the 13 items, PS/GE/AL/AO answer keys, and the results copy. Spec and app are a **living doc** — keep §4/§5 and the data files in sync.
 
 ## Project layout
 
 ```
 src/
-  data/questions.js   12 items + answer keys (verbatim; edit copy here)
+  data/questions.js   13 items + answer keys (scene/prompt/options; edit copy here)
   data/results.js     results copy, intro frame, tie framing, next-step (verbatim)
   lib/scoring.js      key counts + tie logic (pure; single / blend / second-tie)
   lib/shuffle.js      per-load option shuffle
