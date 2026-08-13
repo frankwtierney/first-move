@@ -1,7 +1,7 @@
 import { results } from '../data/results.js'
 import QuadrantGrid from '../components/QuadrantGrid.jsx'
 import { Rich } from '../lib/emphasis.jsx'
-import { resultMailto } from '../lib/resultEmail.js'
+import { openResultPrint } from '../lib/resultPrint.js'
 
 const { labels, tendencies, tieForFirst, tieForSecond } = results
 
@@ -20,9 +20,7 @@ function TendencyBlocks({ keyName }) {
 }
 
 // Screen 3 — Results. Renders single, second-place tie, or first-place blend.
-export default function Results({ result, email, onNext }) {
-  const mailto = resultMailto(email, result)
-
+export default function Results({ result, email, building, onNext }) {
   let headline
   let nextName = null
   let tieLine = null
@@ -66,11 +64,12 @@ export default function Results({ result, email, onNext }) {
       </div>
 
       <div className="stack-top btn-stack">
-        {mailto && (
-          <a className="btn btn-outline" href={mailto}>
-            Email me my results
-          </a>
-        )}
+        <button
+          className="btn btn-outline"
+          onClick={() => openResultPrint({ email, building, result })}
+        >
+          Save my results
+        </button>
         <button className="btn btn-primary" onClick={onNext}>
           What to do next
         </button>

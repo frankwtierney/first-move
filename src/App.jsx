@@ -78,7 +78,7 @@ export default function App() {
   } else if (screen === 'explainer') {
     view = <GridExplainer onReveal={reveal} />
   } else if (screen === 'results') {
-    view = <Results result={computeResult(answers)} email={email} onNext={toNext} />
+    view = <Results result={computeResult(answers)} email={email} building={building} onNext={toNext} />
   } else if (screen === 'next') {
     view = <NextStep onRetake={retake} />
   } else {
