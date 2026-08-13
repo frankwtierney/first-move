@@ -49,7 +49,7 @@ export default function App() {
   // (email + building + result) so Residential Life can follow up. Best-effort;
   // the result renders regardless of whether collection is configured or succeeds.
   const reveal = () => {
-    submitResult({ email, building, result: computeResult(answers) })
+    submitResult({ email, building, answers, result: computeResult(answers) })
     setState((s) => ({ ...s, screen: 'results' }))
   }
   const toNext = () => setState((s) => ({ ...s, screen: 'next' }))
