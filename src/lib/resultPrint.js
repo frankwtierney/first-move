@@ -114,11 +114,16 @@ function buildHtml({ email, building, result }) {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .page { max-width: 44rem; margin: 0 auto; padding: 40px 32px 56px; }
+  .page { max-width: 44rem; margin: 0 auto; padding: 32px 32px 44px; }
 
-  .head { border-bottom: 2px solid var(--ub-blue); padding-bottom: 18px; margin-bottom: 22px; }
+  /* Keep the header from being stranded on its own page: don't allow a page
+     break right after it, so the first block heading stays with it. */
+  .head {
+    border-bottom: 2px solid var(--ub-blue); padding-bottom: 14px; margin-bottom: 16px;
+    break-after: avoid; page-break-after: avoid;
+  }
   .brand {
-    margin: 0 0 14px;
+    margin: 0 0 12px;
     font-size: 10pt; font-weight: 700; letter-spacing: 0.18em;
     color: var(--ub-blue);
   }
@@ -129,23 +134,27 @@ function buildHtml({ email, building, result }) {
   h1 {
     margin: 4px 0 0;
     font-family: "Century Gothic", "Segoe UI", system-ui, sans-serif;
-    font-size: 30pt; font-weight: 700; line-height: 1.1; color: var(--ink);
+    font-size: 26pt; font-weight: 700; line-height: 1.1; color: var(--ink);
     text-wrap: balance;
   }
-  .next { margin: 10px 0 0; font-size: 12.5pt; color: var(--ink); }
+  .next { margin: 9px 0 0; font-size: 12pt; color: var(--ink); }
   .next em { font-style: normal; font-weight: 600; color: var(--ub-blue); }
-  .tie { margin: 8px 0 0; font-size: 11pt; color: var(--gray); }
-  .meta { margin: 16px 0 0; font-size: 9.5pt; color: var(--gray); }
+  .tie { margin: 7px 0 0; font-size: 10.5pt; color: var(--gray); }
+  .meta { margin: 14px 0 0; font-size: 9.5pt; color: var(--gray); }
 
-  .block { margin-top: 26px; break-inside: avoid; page-break-inside: avoid; }
+  /* Blocks may flow across a page boundary (so a page never gets stranded
+     half-empty); rows stay intact and headings stick to their first row. */
+  .block { margin-top: 18px; }
   .block h2 {
-    margin: 0 0 12px;
-    font-size: 15pt; font-weight: 700; color: var(--ink);
+    margin: 0 0 8px;
+    font-size: 14pt; font-weight: 700; color: var(--ink);
     padding-left: 12px; border-left: 4px solid var(--accent);
+    break-after: avoid; page-break-after: avoid;
   }
   .row {
-    display: grid; grid-template-columns: 8.5rem 1fr; gap: 10px 16px;
-    padding: 7px 0; border-top: 1px solid var(--line);
+    display: grid; grid-template-columns: 8.5rem 1fr; gap: 8px 16px;
+    padding: 6px 0; border-top: 1px solid var(--line);
+    break-inside: avoid; page-break-inside: avoid;
   }
   .row:first-of-type { border-top: 0; }
   .k { font-weight: 600; color: var(--gray); font-size: 10.5pt; }
@@ -154,14 +163,15 @@ function buildHtml({ email, building, result }) {
   .v strong { font-weight: 700; }
 
   footer {
-    margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--line);
+    margin-top: 26px; padding-top: 12px; border-top: 1px solid var(--line);
     font-size: 10pt; color: var(--gray);
+    break-inside: avoid; page-break-inside: avoid;
   }
   footer .step { color: var(--ink); font-weight: 600; }
 
   @media print {
     .page { padding: 0; max-width: none; }
-    @page { margin: 0.7in; }
+    @page { margin: 0.6in; }
   }
 </style>
 </head>
