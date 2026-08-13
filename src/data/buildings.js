@@ -11,7 +11,7 @@ export const buildingGroups = [
   { area: 'Main Street', buildings: ['Goodyear Hall', 'Clement Hall'] },
   { area: 'Apartments', buildings: ['South Lake Village', 'Hadley Village', 'Flickinger Village', 'Flint Village', 'Creekside Village'] },
   // Test-only area/building — not real ResLife data; safe to remove after testing.
-  { area: 'ResEd', buildings: ['Blake Building'] },
+  { area: 'ResEd', buildings: ['Blake Center'] },
 ]
 
 // Flat list of all building names (used for the presence check / fallback).
