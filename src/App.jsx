@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { questions } from './data/questions.js'
-import { computeResult } from './lib/scoring.js'
+import { computeResult, resultFromCounts } from './lib/scoring.js'
 import { submitResult } from './lib/collect.js'
 import Landing from './screens/Landing.jsx'
 import Lookup from './screens/Lookup.jsx'
@@ -26,7 +26,7 @@ function loadState() {
 
 export default function App() {
   const [state, setState] = useState(loadState)
-  const { screen, index, answers, email, building } = state
+  const { screen, index, answers, email, building, counts } = state
 
   useEffect(() => {
     try { sessionStorage.setItem(STORE_KEY, JSON.stringify(state)) } catch { /* ignore */ }
@@ -40,10 +40,10 @@ export default function App() {
   const goLookup = () => setState((s) => ({ ...s, screen: 'lookup' }))
   const backToLanding = () => setState((s) => ({ ...s, screen: 'landing' }))
 
-  // Lookup found a prior submission: drop its answers/email/building into state
-  // and render the existing Results screen, identical to the original run.
-  const showFound = ({ email, building, answers }) =>
-    setState((s) => ({ ...s, screen: 'results', answers, email, building }))
+  // Lookup found a prior submission: render the existing Results screen from the
+  // stored counts (authoritative on every row, unlike the answer trail).
+  const showFound = ({ email, building, counts }) =>
+    setState((s) => ({ ...s, screen: 'results', counts, answers: {}, email, building }))
 
   const start = ({ email, building }) =>
     setState({ screen: 'question', index: 0, answers: {}, email, building })
@@ -62,7 +62,8 @@ export default function App() {
   // the result renders regardless of whether collection is configured or succeeds.
   const reveal = () => {
     submitResult({ email, building, answers, result: computeResult(answers) })
-    setState((s) => ({ ...s, screen: 'results' }))
+    // Clear any looked-up counts so a fresh run renders from its own answers.
+    setState((s) => ({ ...s, screen: 'results', counts: undefined }))
   }
   const toNext = () => setState((s) => ({ ...s, screen: 'next' }))
   const retake = () => {
@@ -94,7 +95,9 @@ export default function App() {
   } else if (screen === 'explainer') {
     view = <GridExplainer onReveal={reveal} />
   } else if (screen === 'results') {
-    view = <Results result={computeResult(answers)} email={email} building={building} onNext={toNext} />
+    // Looked-up results carry stored counts; a fresh run computes from answers.
+    const result = counts ? resultFromCounts(counts) : computeResult(answers)
+    view = <Results result={result} email={email} building={building} onNext={toNext} />
   } else if (screen === 'next') {
     view = <NextStep onRetake={retake} />
   } else {

@@ -16,30 +16,41 @@ export function countKeys(answers) {
   return counts
 }
 
-// answers: an object/map of { [questionId]: 'PS' | 'GE' | 'AL' | 'AO' }
-// Returns a discriminated result:
-//   { kind: 'blend',      tied: [k, ...],           counts }
+// Rank a { PS, GE, AL, AO } tally into a discriminated result:
+//   { kind: 'blend',      tied: [k, ...],                counts }
 //   { kind: 'secondTie',  primary: k, secondaries: [k, ...], counts }
-//   { kind: 'single',     primary: k, secondary: k, counts }
-export function computeResult(answers) {
-  const counts = countKeys(answers)
+//   { kind: 'single',     primary: k, secondary: k,         counts }
+// Use this when you already have counts (e.g. a stored result looked up by
+// email). Missing keys normalize to 0 so partial/legacy data can't produce NaN.
+export function resultFromCounts(counts) {
+  const c = {
+    PS: Number(counts?.PS) || 0,
+    GE: Number(counts?.GE) || 0,
+    AL: Number(counts?.AL) || 0,
+    AO: Number(counts?.AO) || 0,
+  }
   const ordered = [...KEY_ORDER]
 
-  const maxCount = Math.max(...ordered.map((k) => counts[k]))
-  const firstPlace = ordered.filter((k) => counts[k] === maxCount)
+  const maxCount = Math.max(...ordered.map((k) => c[k]))
+  const firstPlace = ordered.filter((k) => c[k] === maxCount)
 
   if (firstPlace.length > 1) {
-    return { kind: 'blend', tied: firstPlace, counts }
+    return { kind: 'blend', tied: firstPlace, counts: c }
   }
 
   const primary = firstPlace[0]
   const rest = ordered.filter((k) => k !== primary)
-  const secondCount = Math.max(...rest.map((k) => counts[k]))
-  const secondPlace = rest.filter((k) => counts[k] === secondCount)
+  const secondCount = Math.max(...rest.map((k) => c[k]))
+  const secondPlace = rest.filter((k) => c[k] === secondCount)
 
   if (secondPlace.length > 1) {
-    return { kind: 'secondTie', primary, secondaries: secondPlace, counts }
+    return { kind: 'secondTie', primary, secondaries: secondPlace, counts: c }
   }
 
-  return { kind: 'single', primary, secondary: secondPlace[0], counts }
+  return { kind: 'single', primary, secondary: secondPlace[0], counts: c }
+}
+
+// answers: an object/map of { [questionId]: 'PS' | 'GE' | 'AL' | 'AO' }.
+export function computeResult(answers) {
+  return resultFromCounts(countKeys(answers))
 }

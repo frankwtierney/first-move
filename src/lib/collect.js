@@ -89,28 +89,20 @@ export async function submitResult({ email, building, answers, result }) {
   }
 }
 
-// Rebuild the { [questionId]: key } map that scoring.computeResult expects from
-// the stored answer trail, so a looked-up result renders identically to the
-// original. Falls back to positional ids if a row predates the id field.
-function answersToMap(stored) {
-  const map = {}
-  ;(stored || []).forEach((a, i) => {
-    if (a && a.key) map[a.id ?? i] = a.key
-  })
-  return map
-}
-
 // "See my results": fetch the most recent submission for a UB email. Returns
-// { email, building, answers } for App to render on the Results screen, or null
-// if there's nothing on file. Throws only on network/HTTP failure so the caller
-// can distinguish "no results yet" from "lookup couldn't run".
+// { email, building, counts } for App to render on the Results screen via
+// scoring.resultFromCounts, or null if there's nothing on file. We read the
+// stored `counts` column directly — it's authoritative and present on every
+// row, unlike the `answers` trail which is null on the earliest submissions.
+// Throws only on network/HTTP failure so the caller can tell "no results yet"
+// from "lookup couldn't run".
 export async function fetchLatestResult(email) {
   const clean = (email || '').trim()
   if (!clean) return null
   // ilike (no wildcards) = exact match, case-insensitive, so 'You@Buffalo.edu'
   // finds a row stored as 'you@buffalo.edu'.
   const query =
-    `?select=email,building,answers` +
+    `?select=email,building,counts` +
     `&email=ilike.${encodeURIComponent(clean)}` +
     `&order=created_at.desc&limit=1`
   const res = await fetch(ENDPOINT + query, { headers: HEADERS })
@@ -121,6 +113,6 @@ export async function fetchLatestResult(email) {
   return {
     email: row.email || clean,
     building: row.building || '',
-    answers: answersToMap(row.answers),
+    counts: row.counts || null,
   }
 }
