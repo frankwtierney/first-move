@@ -1,15 +1,12 @@
 import { useState } from 'react'
 import { results } from '../data/results.js'
 import { buildings, buildingGroups } from '../data/buildings.js'
+import { UB_EMAIL } from '../lib/ubEmail.js'
 
 // Screen 1 — Intro. Title, one-paragraph frame, required UB email + required
 // building, Start. The UB email is the participant's unique ID: it's stored with
 // their result so Residential Life can follow up (see lib/collect.js) and builds
 // the mailto to their own inbox at the end. Start is disabled until both are set.
-//
-// A UB email is anything @buffalo.edu (incl. subdomains like @dental.buffalo.edu).
-// Relax UB_EMAIL if you need to accept non-UB addresses.
-const UB_EMAIL = /^[^\s@]+@([^\s@.]+\.)*buffalo\.edu$/i
 
 export default function Intro({ onStart, initialEmail = '', initialBuilding = '' }) {
   const [email, setEmail] = useState(initialEmail)

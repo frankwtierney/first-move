@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { questions } from './data/questions.js'
 import { computeResult } from './lib/scoring.js'
 import { submitResult } from './lib/collect.js'
+import Landing from './screens/Landing.jsx'
+import Lookup from './screens/Lookup.jsx'
 import Intro from './screens/Intro.jsx'
 import Question from './screens/Question.jsx'
 import GridExplainer from './screens/GridExplainer.jsx'
@@ -19,7 +21,7 @@ function loadState() {
     const raw = sessionStorage.getItem(STORE_KEY)
     if (raw) return JSON.parse(raw)
   } catch { /* ignore */ }
-  return { screen: 'intro', index: 0, answers: {}, email: '', building: '' }
+  return { screen: 'landing', index: 0, answers: {}, email: '', building: '' }
 }
 
 export default function App() {
@@ -32,6 +34,16 @@ export default function App() {
 
   // Move focus/scroll to top on each screen or question change.
   useEffect(() => { window.scrollTo(0, 0) }, [screen, index])
+
+  // Landing → the two front-door paths.
+  const goTake = () => setState((s) => ({ ...s, screen: 'intro' }))
+  const goLookup = () => setState((s) => ({ ...s, screen: 'lookup' }))
+  const backToLanding = () => setState((s) => ({ ...s, screen: 'landing' }))
+
+  // Lookup found a prior submission: drop its answers/email/building into state
+  // and render the existing Results screen, identical to the original run.
+  const showFound = ({ email, building, answers }) =>
+    setState((s) => ({ ...s, screen: 'results', answers, email, building }))
 
   const start = ({ email, building }) =>
     setState({ screen: 'question', index: 0, answers: {}, email, building })
@@ -63,7 +75,11 @@ export default function App() {
     setState({ screen: 'results', index: TOTAL - 1, answers: patternAnswers })
 
   let view
-  if (screen === 'question') {
+  if (screen === 'landing') {
+    view = <Landing onTake={goTake} onLookup={goLookup} />
+  } else if (screen === 'lookup') {
+    view = <Lookup onFound={showFound} onTake={goTake} onBack={backToLanding} />
+  } else if (screen === 'question') {
     const item = questions[index]
     view = (
       <Question

@@ -3,9 +3,11 @@
 // the per-style counts, and the full per-question answer trail. Residential
 // Life reads these from the Supabase dashboard to follow up.
 //
-// Storage is the dedicated "FirstMove" Supabase project. The table is
-// insert-only from the browser via the anon key (row-level security blocks all
-// reads/updates/deletes from the client), so this key is safe to ship publicly:
+// Storage is the dedicated "FirstMove" Supabase project. Via the anon key the
+// browser can insert rows and read them back for the "See my results" lookup
+// (row-level security blocks updates/deletes). Read access is intentionally
+// open: results are low-sensitivity and any UB email can be looked up without
+// auth. The anon key is therefore safe to ship publicly:
 //
 //   create table public.first_move_results (
 //     id           uuid primary key default gen_random_uuid(),
@@ -84,5 +86,41 @@ export async function submitResult({ email, building, answers, result }) {
     await fetch(ENDPOINT, { method: 'POST', headers: HEADERS, body: JSON.stringify(payload) })
   } catch {
     /* best-effort; never block the user's result on collection */
+  }
+}
+
+// Rebuild the { [questionId]: key } map that scoring.computeResult expects from
+// the stored answer trail, so a looked-up result renders identically to the
+// original. Falls back to positional ids if a row predates the id field.
+function answersToMap(stored) {
+  const map = {}
+  ;(stored || []).forEach((a, i) => {
+    if (a && a.key) map[a.id ?? i] = a.key
+  })
+  return map
+}
+
+// "See my results": fetch the most recent submission for a UB email. Returns
+// { email, building, answers } for App to render on the Results screen, or null
+// if there's nothing on file. Throws only on network/HTTP failure so the caller
+// can distinguish "no results yet" from "lookup couldn't run".
+export async function fetchLatestResult(email) {
+  const clean = (email || '').trim()
+  if (!clean) return null
+  // ilike (no wildcards) = exact match, case-insensitive, so 'You@Buffalo.edu'
+  // finds a row stored as 'you@buffalo.edu'.
+  const query =
+    `?select=email,building,answers` +
+    `&email=ilike.${encodeURIComponent(clean)}` +
+    `&order=created_at.desc&limit=1`
+  const res = await fetch(ENDPOINT + query, { headers: HEADERS })
+  if (!res.ok) throw new Error(`Lookup failed (${res.status})`)
+  const rows = await res.json()
+  if (!Array.isArray(rows) || rows.length === 0) return null
+  const row = rows[0]
+  return {
+    email: row.email || clean,
+    building: row.building || '',
+    answers: answersToMap(row.answers),
   }
 }
